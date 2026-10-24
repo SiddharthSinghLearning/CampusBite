@@ -6,3 +6,6 @@ node_modules/
 docs/report/*.docx
 docs/report/*.pdf
 docs/report/~$*
+
+# report sources and study guide (kept locally only)
+docs/
