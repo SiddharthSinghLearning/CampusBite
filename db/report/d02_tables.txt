@@ -1,0 +1,44 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:35 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 100
+SQL> SET PAGESIZE 100
+SQL> COLUMN table_name FORMAT A22
+SQL> SELECT table_name,
+  2  	    TO_NUMBER(EXTRACTVALUE(XMLTYPE(DBMS_XMLGEN.GETXML(
+  3  	      'SELECT COUNT(*) c FROM ' || table_name)), '/ROWSET/ROW/C')) AS row_count
+  4    FROM user_tables
+  5   ORDER BY table_name;
+
+TABLE_NAME		ROW_COUNT
+---------------------- ----------
+APP_USER			8
+CATEGORY			6
+COUPON				3
+DAILY_SALES_SUMMARY	       21
+MENU_ITEM		       26
+ORDERS			       62
+ORDER_ITEM		      121
+ORDER_STATUS_LOG	      285
+OUTLET				3
+PICKUP_SLOT		       55
+PRICE_HISTORY			2
+REVIEW			       53
+STOCK_ALERT			3
+TOKEN_COUNTER		       22
+WALLET_TXN		       71
+
+15 rows selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

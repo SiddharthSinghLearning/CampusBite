@@ -1,0 +1,10 @@
+SET ECHO ON
+SET LINESIZE 100
+SET PAGESIZE 100
+COLUMN table_name FORMAT A22
+SELECT table_name,
+       TO_NUMBER(EXTRACTVALUE(XMLTYPE(DBMS_XMLGEN.GETXML(
+         'SELECT COUNT(*) c FROM ' || table_name)), '/ROWSET/ROW/C')) AS row_count
+  FROM user_tables
+ ORDER BY table_name;
+EXIT

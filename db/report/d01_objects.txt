@@ -1,0 +1,63 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:34 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:31 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 110
+SQL> SET PAGESIZE 100
+SQL> COLUMN object_name FORMAT A26
+SQL> COLUMN object_type FORMAT A13
+SQL> COLUMN status FORMAT A7
+SQL> SELECT object_type, COUNT(*) AS total,
+  2  	    SUM(CASE WHEN status = 'VALID' THEN 1 ELSE 0 END) AS valid
+  3    FROM user_objects
+  4   WHERE object_type IN ('TABLE','VIEW','PACKAGE','PACKAGE BODY','TRIGGER','TYPE','INDEX')
+  5   GROUP BY object_type ORDER BY object_type;
+
+OBJECT_TYPE	   TOTAL      VALID
+------------- ---------- ----------
+INDEX		      28	 28
+PACKAGE 	       1	  1
+PACKAGE BODY	       1	  1
+TABLE		      15	 15
+TRIGGER 	       9	  9
+TYPE		       2	  2
+VIEW		       2	  2
+
+7 rows selected.
+
+SQL> SELECT object_name, object_type, status
+  2    FROM user_objects
+  3   WHERE object_type IN ('PACKAGE','PACKAGE BODY','TRIGGER','VIEW','TYPE')
+  4   ORDER BY object_type, object_name;
+
+OBJECT_NAME		   OBJECT_TYPE	 STATUS
+-------------------------- ------------- -------
+CANTEEN_PKG		   PACKAGE	 VALID
+CANTEEN_PKG		   PACKAGE BODY  VALID
+TRG_LOYALTY_POINTS	   TRIGGER	 VALID
+TRG_MENU_PRICE_AUDIT	   TRIGGER	 VALID
+TRG_MENU_STOCK_WATCH	   TRIGGER	 VALID
+TRG_ORDER_ITEM_STOCK	   TRIGGER	 VALID
+TRG_ORDER_SLOT		   TRIGGER	 VALID
+TRG_ORDER_STATUS_AUDIT	   TRIGGER	 VALID
+TRG_ORDER_TOKEN 	   TRIGGER	 VALID
+TRG_REVIEW_RATING	   TRIGGER	 VALID
+TRG_WALLET_GUARD	   TRIGGER	 VALID
+T_SLOT_ROW		   TYPE 	 VALID
+T_SLOT_TAB		   TYPE 	 VALID
+V_MENU			   VIEW 	 VALID
+V_ORDER_DETAILS 	   VIEW 	 VALID
+
+15 rows selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

@@ -1,0 +1,69 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:35 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET SERVEROUTPUT ON
+SQL> SET LINESIZE 130
+SQL> SET PAGESIZE 100
+SQL> DECLARE
+  2    v_bal   NUMBER;
+  3    v_order NUMBER;
+  4    v_token NUMBER;
+  5    v_total NUMBER;
+  6  BEGIN
+  7    canteen_pkg.topup_wallet(7, 300, 'Report demo top-up', v_bal);
+  8    DBMS_OUTPUT.PUT_LINE('Wallet after top-up : Rs.' || v_bal);
+  9    canteen_pkg.place_order(
+ 10  	 p_user_id     => 7,
+ 11  	 p_outlet_id   => 3,
+ 12  	 p_cart_json   => '[{"item_id":21,"qty":2},{"item_id":26,"qty":1}]',
+ 13  	 p_coupon      => 'EXAM10',
+ 14  	 p_pickup_slot => NULL,
+ 15  	 p_notes       => 'Extra spicy',
+ 16  	 o_order_id    => v_order,
+ 17  	 o_token_no    => v_token,
+ 18  	 o_total       => v_total);
+ 19    DBMS_OUTPUT.PUT_LINE('Order placed	 : #' || v_order || '  token ' || v_token || '	total Rs.' || v_total);
+ 20  END;
+ 21  /
+Wallet after top-up : Rs.2706.5
+Order placed	    : #64  token 1  total Rs.132.3
+
+PL/SQL procedure successfully completed.
+
+SQL> COLUMN customer FORMAT A12
+SQL> COLUMN items_text FORMAT A32
+SQL> COLUMN slot FORMAT A5
+SQL> SELECT order_id, token_no, status, customer, subtotal, discount, tax, total_amount,
+  2  	    TO_CHAR(pickup_slot, 'HH24:MI') AS slot, items_text
+  3    FROM v_order_details WHERE order_id = (SELECT MAX(order_id) FROM orders);
+
+  ORDER_ID   TOKEN_NO STATUS	   CUSTOMER	  SUBTOTAL   DISCOUNT	     TAX TOTAL_AMOUNT SLOT
+---------- ---------- ------------ ------------ ---------- ---------- ---------- ------------ -----
+ITEMS_TEXT
+--------------------------------
+	64	    1 PLACED	   Rahul Verma	       140	   14	     6.3	132.3 18:00
+Hot Chocolate x1, Maggi Masala x
+2
+
+
+SQL> COLUMN remarks FORMAT A22
+SQL> SELECT txn_type, amount, balance_after, remarks
+  2    FROM wallet_txn WHERE user_id = 7 ORDER BY txn_id DESC FETCH FIRST 2 ROWS ONLY;
+
+TXN_TYPE       AMOUNT BALANCE_AFTER REMARKS
+---------- ---------- ------------- ----------------------
+DEBIT		132.3	     2574.2 Order #64
+TOPUP		  300	     2706.5 Report demo top-up
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

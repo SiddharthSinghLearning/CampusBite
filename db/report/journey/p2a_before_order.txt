@@ -1,0 +1,36 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:48:01 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:51 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 140
+SQL> SET PAGESIZE 100
+SQL> SET FEEDBACK ON
+SQL> COLUMN name FORMAT A12
+SQL> SELECT item_id, name, stock_qty FROM menu_item WHERE item_id IN (1, 9) ORDER BY item_id;
+
+   ITEM_ID NAME 	 STOCK_QTY
+---------- ------------ ----------
+	 1 Masala Dosa		59
+	 9 Pav Bhaji		60
+
+2 rows selected.
+
+SQL> SELECT wallet_balance, loyalty_points FROM app_user WHERE user_id = 5;
+
+WALLET_BALANCE LOYALTY_POINTS
+-------------- --------------
+	 795.8		  413
+
+1 row selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

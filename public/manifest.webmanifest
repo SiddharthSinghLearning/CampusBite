@@ -1,0 +1,12 @@
+{
+  "name": "CampusBite - Campus Canteen Pre-Order",
+  "short_name": "CampusBite",
+  "description": "Pre-order food from campus canteens and skip the queue.",
+  "start_url": "./#/",
+  "display": "standalone",
+  "background_color": "#f7f5f2",
+  "theme_color": "#e8590c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

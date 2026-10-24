@@ -1,0 +1,56 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:35 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> SELECT canteen_pkg.calc_coupon_discount('WELCOME20', 300) AS welcome20_on_300,
+  2  	    canteen_pkg.calc_coupon_discount('EXAM10', 200)    AS exam10_on_200,
+  3  	    canteen_pkg.get_wallet_balance(6)		       AS ananya_wallet,
+  4  	    canteen_pkg.estimate_wait_minutes(1)	       AS foodcourt_wait_min
+  5    FROM dual;
+
+WELCOME20_ON_300 EXAM10_ON_200 ANANYA_WALLET FOODCOURT_WAIT_MIN
+---------------- ------------- ------------- ------------------
+	      50	    20	     1806.42		     12
+
+SQL> COLUMN night_open FORMAT A10
+SQL> COLUMN juice_open FORMAT A10
+SQL> COLUMN placed_to_ready FORMAT A15
+SQL> COLUMN ready_to_picked FORMAT A15
+SQL> SELECT canteen_pkg.outlet_is_open(3)			 AS night_open,
+  2  	    canteen_pkg.outlet_is_open(2)			 AS juice_open,
+  3  	    canteen_pkg.is_valid_transition('PLACED','READY')	 AS placed_to_ready,
+  4  	    canteen_pkg.is_valid_transition('READY','PICKED_UP') AS ready_to_picked
+  5    FROM dual;
+
+NIGHT_OPEN JUICE_OPEN PLACED_TO_READY READY_TO_PICKED
+---------- ---------- --------------- ---------------
+N	   Y	      N 	      Y
+
+SQL> COLUMN slot_start FORMAT A20
+SQL> SELECT TO_CHAR(slot_start, 'DD-MON HH24:MI') AS slot_start, capacity, booked, available
+  2    FROM TABLE(canteen_pkg.get_slots(3, 6));
+
+SLOT_START	       CAPACITY     BOOKED  AVAILABLE
+-------------------- ---------- ---------- ----------
+24-OCT 18:00		      6 	 0	    6
+24-OCT 18:15		      6 	 0	    6
+24-OCT 18:30		      6 	 0	    6
+24-OCT 18:45		      6 	 0	    6
+24-OCT 19:00		      6 	 0	    6
+24-OCT 19:15		      6 	 0	    6
+
+6 rows selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

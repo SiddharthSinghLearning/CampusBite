@@ -1,0 +1,51 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:35 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 100
+SQL> SET PAGESIZE 100
+SQL> COLUMN member FORMAT A24
+SQL> COLUMN kind FORMAT A9
+SQL> SELECT p.procedure_name AS member,
+  2  	    CASE WHEN EXISTS (SELECT 1 FROM user_arguments a
+  3  			       WHERE a.package_name = 'CANTEEN_PKG' AND a.object_name = p.procedure_name
+  4  				 AND a.position = 0) THEN 'FUNCTION' ELSE 'PROCEDURE' END AS kind
+  5    FROM user_procedures p
+  6   WHERE p.object_name = 'CANTEEN_PKG' AND p.procedure_name IS NOT NULL
+  7   ORDER BY kind, member;
+
+MEMBER			 KIND
+------------------------ ---------
+CALC_COUPON_DISCOUNT	 FUNCTION
+EARLIEST_SLOT		 FUNCTION
+ESTIMATE_WAIT_MINUTES	 FUNCTION
+GET_SLOTS		 FUNCTION
+GET_WALLET_BALANCE	 FUNCTION
+IS_OPEN_AT		 FUNCTION
+IS_VALID_TRANSITION	 FUNCTION
+NEXT_AVAILABLE_SLOT	 FUNCTION
+OUTLET_IS_OPEN		 FUNCTION
+ADD_REVIEW		 PROCEDURE
+CANCEL_ORDER		 PROCEDURE
+GENERATE_DAILY_SUMMARY	 PROCEDURE
+GET_LOW_STOCK		 PROCEDURE
+GET_SALES_REPORT	 PROCEDURE
+GET_TOP_ITEMS		 PROCEDURE
+PLACE_ORDER		 PROCEDURE
+TOPUP_WALLET		 PROCEDURE
+UPDATE_ORDER_STATUS	 PROCEDURE
+VERIFY_PICKUP		 PROCEDURE
+
+19 rows selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

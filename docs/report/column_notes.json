@@ -1,0 +1,143 @@
+{
+  "APP_USER": {
+    "user_id": "Unique user identifier",
+    "full_name": "Name shown in the app",
+    "email": "Login id; format checked by regex",
+    "phone": "10-digit mobile number (optional)",
+    "reg_no": "University registration number (students)",
+    "password_hash": "Salted scrypt hash, never the password",
+    "role": "STUDENT, VENDOR or ADMIN",
+    "wallet_balance": "Prepaid balance; maintained only by package procedures",
+    "loyalty_points": "Credited by trg_loyalty_points",
+    "is_active": "Y / N; deactivated users cannot order",
+    "created_at": "Registration time"
+  },
+  "OUTLET": {
+    "outlet_id": "Unique outlet identifier",
+    "name": "Outlet name",
+    "location": "Where it is on campus",
+    "owner_id": "Vendor who manages the outlet",
+    "open_time": "Opening time (HH24:MI)",
+    "close_time": "Closing time; may be past midnight",
+    "is_open": "Vendor's pause switch",
+    "parallel_slots": "Orders the kitchen can cook at once (wait estimate)",
+    "slot_capacity": "Maximum orders per 15-minute pickup slot",
+    "tagline": "Short description",
+    "cover_url": "Cover photo"
+  },
+  "CATEGORY": {
+    "category_id": "Unique category identifier",
+    "name": "Breakfast, Meals, Snacks, ..."
+  },
+  "MENU_ITEM": {
+    "item_id": "Unique dish identifier",
+    "outlet_id": "Outlet selling the dish",
+    "category_id": "Menu category",
+    "name": "Dish name (unique within an outlet)",
+    "description": "Short description",
+    "price": "Current price in rupees",
+    "is_veg": "Y = veg, N = non-veg",
+    "stock_qty": "Plates left today",
+    "prep_minutes": "Cooking time",
+    "is_available": "Shown on the menu; set to N by trigger at stock 0",
+    "rating_avg": "Average rating (maintained by trigger)",
+    "rating_count": "Number of ratings",
+    "image_url": "Dish photo"
+  },
+  "COUPON": {
+    "code": "Coupon code",
+    "discount_pct": "Percentage discount",
+    "max_discount": "Cap on the discount in rupees",
+    "min_order": "Minimum subtotal",
+    "valid_from": "First valid day",
+    "valid_to": "Last valid day",
+    "usage_limit": "Maximum uses",
+    "used_count": "Uses so far"
+  },
+  "PICKUP_SLOT": {
+    "outlet_id": "Outlet of the slot",
+    "slot_start": "Start of the 15-minute window",
+    "capacity": "Copied from outlet.slot_capacity when the slot is first used",
+    "booked": "Orders booked in the slot (maintained by trg_order_slot)"
+  },
+  "ORDERS": {
+    "order_id": "Unique order identifier",
+    "user_id": "Student who placed the order",
+    "outlet_id": "Outlet preparing the order",
+    "token_no": "Daily token (trg_order_token)",
+    "pickup_code": "Secret 6-digit code encoded in the QR",
+    "status": "Order life-cycle state",
+    "subtotal": "Sum of order lines",
+    "discount": "Coupon discount",
+    "tax": "5% GST",
+    "total_amount": "Amount debited from the wallet",
+    "coupon_code": "Coupon applied, if any",
+    "pickup_slot": "Booked 15-minute slot",
+    "notes": "Instructions for the kitchen",
+    "placed_at": "Time the order was placed",
+    "updated_at": "Last status change (audit trigger)",
+    "picked_up_at": "Time of verified pickup"
+  },
+  "ORDER_ITEM": {
+    "order_id": "Order this line belongs to",
+    "item_id": "Dish ordered",
+    "qty": "Quantity (1 to 20)",
+    "unit_price": "Menu price at the time of ordering (set by trigger)",
+    "line_total": "qty x unit_price"
+  },
+  "WALLET_TXN": {
+    "txn_id": "Unique transaction identifier",
+    "user_id": "Wallet owner",
+    "txn_type": "TOPUP, DEBIT or REFUND",
+    "amount": "Amount moved",
+    "balance_after": "Balance after this transaction",
+    "order_id": "Related order (none for a top-up)",
+    "remarks": "Description",
+    "created_at": "Transaction time"
+  },
+  "REVIEW": {
+    "review_id": "Unique review identifier",
+    "order_id": "Order the dish came from",
+    "item_id": "Dish rated",
+    "user_id": "Reviewer",
+    "rating": "1 to 5 stars",
+    "comments": "Optional comment",
+    "created_at": "Review time"
+  },
+  "ORDER_STATUS_LOG": {
+    "log_id": "Unique log identifier",
+    "order_id": "Order whose status changed",
+    "old_status": "Previous status (empty for a new order)",
+    "new_status": "New status",
+    "changed_at": "Time of change"
+  },
+  "TOKEN_COUNTER": {
+    "outlet_id": "Outlet",
+    "token_date": "Calendar day",
+    "last_token": "Last token issued that day"
+  },
+  "PRICE_HISTORY": {
+    "history_id": "Unique identifier",
+    "item_id": "Dish",
+    "old_price": "Price before the change",
+    "new_price": "Price after the change",
+    "changed_at": "Time of change"
+  },
+  "STOCK_ALERT": {
+    "alert_id": "Unique identifier",
+    "item_id": "Dish running low",
+    "stock_qty": "Stock when the alert was raised",
+    "is_resolved": "Set to Y by trigger after restocking",
+    "created_at": "Time raised"
+  },
+  "DAILY_SALES_SUMMARY": {
+    "summary_date": "Day summarised",
+    "outlet_id": "Outlet",
+    "total_orders": "Orders placed",
+    "cancelled_orders": "Orders cancelled",
+    "items_sold": "Plates sold",
+    "gross_revenue": "Revenue excluding cancellations",
+    "top_item_id": "Best-selling dish of the day",
+    "generated_at": "When the cursor procedure ran"
+  }
+}

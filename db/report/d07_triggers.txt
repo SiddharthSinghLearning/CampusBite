@@ -1,0 +1,76 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:35 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> COLUMN trigger_name FORMAT A22
+SQL> COLUMN trigger_type FORMAT A16
+SQL> COLUMN event FORMAT A26
+SQL> COLUMN table_name FORMAT A11
+SQL> SELECT trigger_name, trigger_type, triggering_event AS event, table_name, status
+  2    FROM user_triggers ORDER BY table_name, trigger_name;
+
+TRIGGER_NAME	       TRIGGER_TYPE	EVENT			   TABLE_NAME  STATUS
+---------------------- ---------------- -------------------------- ----------- --------
+TRG_WALLET_GUARD       BEFORE EACH ROW	UPDATE			   APP_USER    ENABLED
+TRG_MENU_PRICE_AUDIT   AFTER EACH ROW	UPDATE			   MENU_ITEM   ENABLED
+TRG_MENU_STOCK_WATCH   BEFORE EACH ROW	UPDATE			   MENU_ITEM   ENABLED
+TRG_LOYALTY_POINTS     AFTER EACH ROW	UPDATE			   ORDERS      ENABLED
+TRG_ORDER_SLOT	       BEFORE EACH ROW	INSERT OR UPDATE	   ORDERS      ENABLED
+TRG_ORDER_STATUS_AUDIT COMPOUND 	INSERT OR UPDATE	   ORDERS      ENABLED
+TRG_ORDER_TOKEN        BEFORE EACH ROW	INSERT			   ORDERS      ENABLED
+TRG_ORDER_ITEM_STOCK   BEFORE EACH ROW	INSERT			   ORDER_ITEM  ENABLED
+TRG_REVIEW_RATING      AFTER EACH ROW	INSERT			   REVIEW      ENABLED
+
+9 rows selected.
+
+SQL> UPDATE menu_item SET stock_qty = 3 WHERE item_id = 24;
+
+1 row updated.
+
+SQL> UPDATE menu_item SET stock_qty = 0 WHERE item_id = 25;
+
+1 row updated.
+
+SQL> UPDATE menu_item SET price = 85 WHERE item_id = 24;
+
+1 row updated.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> COLUMN name FORMAT A14
+SQL> SELECT item_id, name, stock_qty, is_available, price FROM menu_item WHERE item_id IN (24, 25);
+
+   ITEM_ID NAME 	   STOCK_QTY I	    PRICE
+---------- -------------- ---------- - ----------
+	24 Paneer Roll		   3 Y	       85
+	25 Chicken Roll 	   0 N	       90
+
+SQL> SELECT a.alert_id, m.name, a.stock_qty, a.is_resolved
+  2    FROM stock_alert a JOIN menu_item m ON m.item_id = a.item_id WHERE a.item_id = 24;
+
+  ALERT_ID NAME 	   STOCK_QTY I
+---------- -------------- ---------- -
+	 4 Paneer Roll		   3 N
+
+SQL> SELECT m.name, h.old_price, h.new_price
+  2    FROM price_history h JOIN menu_item m ON m.item_id = h.item_id WHERE h.item_id = 24;
+
+NAME		OLD_PRICE  NEW_PRICE
+-------------- ---------- ----------
+Paneer Roll	       80	  85
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

@@ -1,0 +1,59 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:48:41 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:48:11 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 140
+SQL> SET PAGESIZE 100
+SQL> SET FEEDBACK ON
+SQL> COLUMN old_status FORMAT A10
+SQL> COLUMN new_status FORMAT A10
+SQL> SELECT log_id, old_status, new_status, TO_CHAR(changed_at, 'HH24:MI:SS') AS changed_at
+  2    FROM order_status_log WHERE order_id = 87 ORDER BY log_id;
+
+    LOG_ID OLD_STATUS NEW_STATUS CHANGED_
+---------- ---------- ---------- --------
+       326	      PLACED	 16:48:08
+       327 PLACED     ACCEPTED	 16:48:18
+       328 ACCEPTED   PREPARING  16:48:20
+       329 PREPARING  READY	 16:48:22
+       330 READY      PICKED_UP  16:48:33
+
+5 rows selected.
+
+SQL> SELECT status, TO_CHAR(picked_up_at, 'HH24:MI:SS') AS picked_up_at FROM orders WHERE order_id = 87;
+
+STATUS	     PICKED_U
+------------ --------
+PICKED_UP    16:48:33
+
+1 row selected.
+
+SQL> SELECT wallet_balance, loyalty_points FROM app_user WHERE user_id = 5;
+
+WALLET_BALANCE LOYALTY_POINTS
+-------------- --------------
+	 606.8		  431
+
+1 row selected.
+
+SQL> COLUMN name FORMAT A12
+SQL> SELECT r.order_id, m.name, r.rating, m.rating_avg, m.rating_count
+  2    FROM review r JOIN menu_item m ON m.item_id = r.item_id WHERE r.order_id = 87;
+
+  ORDER_ID NAME 	    RATING RATING_AVG RATING_COUNT
+---------- ------------ ---------- ---------- ------------
+	87 Masala Dosa		 5	  4.2		 5
+
+1 row selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

@@ -1,0 +1,18 @@
+{
+  "name": "campusbite",
+  "version": "1.0.0",
+  "description": "CampusBite - campus canteen pre-order system (Oracle PL/SQL + Node.js)",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cookie-session": "^2.1.1",
+    "express": "^4.22.3",
+    "oracledb": "^26.0.0"
+  }
+}

@@ -1,0 +1,42 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:36 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:36 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET SERVEROUTPUT ON
+SQL> SET LINESIZE 140
+SQL> DECLARE
+  2    o NUMBER; t NUMBER; tot NUMBER;
+  3    PROCEDURE try (p_label VARCHAR2, p_cart VARCHAR2, p_coupon VARCHAR2 DEFAULT NULL) IS
+  4    BEGIN
+  5  	 canteen_pkg.place_order(8, 3, p_cart, p_coupon, NULL, NULL, o, t, tot);
+  6  	 DBMS_OUTPUT.PUT_LINE(p_label || ' -> accepted (unexpected)');
+  7    EXCEPTION WHEN OTHERS THEN
+  8  	 DBMS_OUTPUT.PUT_LINE(RPAD(p_label, 20) || ' -> ' || SQLERRM);
+  9    END;
+ 10  BEGIN
+ 11    try('More than stock',	'[{"item_id":21,"qty":99}]');
+ 12    try('Sold-out dish',	'[{"item_id":25,"qty":1}]');
+ 13    try('Other outlet item', '[{"item_id":1,"qty":1}]');
+ 14    try('Expired coupon',	'[{"item_id":21,"qty":1}]', 'FEST50');
+ 15    try('Empty cart',	'[]');
+ 16  END;
+ 17  /
+More than stock      -> ORA-20023: Only 58 left of "Maggi Masala"
+Sold-out dish	     -> ORA-20022: Item "Chicken Roll" is currently unavailable
+Other outlet item    -> ORA-20021: Item "Masala Dosa" is not sold at this outlet
+Expired coupon	     -> ORA-20004: Coupon FEST50 has expired
+Empty cart	     -> ORA-20003: Cart is empty
+
+PL/SQL procedure successfully completed.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

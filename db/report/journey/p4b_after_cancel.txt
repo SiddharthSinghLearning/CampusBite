@@ -1,0 +1,62 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:48:53 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:48:48 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 140
+SQL> SET PAGESIZE 100
+SQL> SET FEEDBACK ON
+SQL> SELECT order_id, status, total_amount FROM orders WHERE order_id = 88;
+
+  ORDER_ID STATUS	TOTAL_AMOUNT
+---------- ------------ ------------
+	88 CANCELLED		 168
+
+1 row selected.
+
+SQL> COLUMN remarks FORMAT A36
+SQL> SELECT txn_type, amount, balance_after, remarks FROM wallet_txn WHERE order_id = 88 ORDER BY txn_id;
+
+TXN_TYPE       AMOUNT BALANCE_AFTER REMARKS
+---------- ---------- ------------- ------------------------------------
+DEBIT		  168	      438.8 Order #88
+REFUND		  168	      606.8 Cancelled by student, order #88
+
+2 rows selected.
+
+SQL> SELECT stock_qty FROM menu_item WHERE item_id = 17;
+
+ STOCK_QTY
+----------
+	56
+
+1 row selected.
+
+SQL> SELECT booked FROM pickup_slot WHERE (outlet_id, slot_start) IN (SELECT outlet_id, pickup_slot FROM orders WHERE order_id = 88);
+
+    BOOKED
+----------
+	 2
+
+1 row selected.
+
+SQL> COLUMN new_status FORMAT A10
+SQL> SELECT old_status, new_status FROM order_status_log WHERE order_id = 88 ORDER BY log_id;
+
+OLD_STATUS   NEW_STATUS
+------------ ----------
+	     PLACED
+PLACED	     CANCELLED
+
+2 rows selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

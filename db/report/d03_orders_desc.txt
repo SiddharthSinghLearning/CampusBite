@@ -1,0 +1,61 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:35 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> DESC orders
+ Name								   Null?    Type
+ ----------------------------------------------------------------- -------- --------------------------------------------
+ ORDER_ID							   NOT NULL NUMBER
+ USER_ID							   NOT NULL NUMBER
+ OUTLET_ID							   NOT NULL NUMBER
+ TOKEN_NO								    NUMBER(5)
+ PICKUP_CODE								    VARCHAR2(6)
+ STATUS 							   NOT NULL VARCHAR2(12)
+ SUBTOTAL							   NOT NULL NUMBER(10,2)
+ DISCOUNT							   NOT NULL NUMBER(10,2)
+ TAX								   NOT NULL NUMBER(10,2)
+ TOTAL_AMOUNT							   NOT NULL NUMBER(10,2)
+ COUPON_CODE								    VARCHAR2(20)
+ PICKUP_SLOT								    DATE
+ NOTES									    VARCHAR2(200)
+ PLACED_AT							   NOT NULL TIMESTAMP(6)
+ PICKED_UP_AT								    TIMESTAMP(6)
+ UPDATED_AT							   NOT NULL TIMESTAMP(6)
+
+SQL> COLUMN constraint_name FORMAT A18
+SQL> COLUMN type FORMAT A4
+SQL> COLUMN rule FORMAT A70 WORD_WRAPPED
+SQL> SELECT constraint_name, constraint_type AS type,
+  2  	    NVL(search_condition_vc, r_constraint_name) AS rule
+  3    FROM user_constraints
+  4   WHERE table_name = 'ORDERS' AND constraint_name NOT LIKE 'SYS%'
+  5   ORDER BY constraint_type, constraint_name;
+
+CONSTRAINT_NAME    TYPE RULE
+------------------ ---- ----------------------------------------------------------------------
+CK_ORDERS_AMOUNTS  C	subtotal >= 0 AND discount >= 0 AND tax >= 0 AND total_amount >= 0
+CK_ORDERS_CODE	   C	pickup_code IS NULL OR REGEXP_LIKE(pickup_code, '^[0-9]{6}$')
+CK_ORDERS_STATUS   C	status IN
+			('PLACED','ACCEPTED','PREPARING','READY','PICKED_UP','CANCELLED')
+
+PK_ORDERS	   P
+FK_ORDERS_COUPON   R	PK_COUPON
+FK_ORDERS_OUTLET   R	PK_OUTLET
+FK_ORDERS_SLOT	   R	PK_PICKUP_SLOT
+FK_ORDERS_USER	   R	PK_APP_USER
+
+8 rows selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

@@ -1,0 +1,78 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:36 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:36 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+TC    Description					  Expected		 Actual 		Result
+--------------------------------------------------------------------------------------------------------------
+TC01  Top-up Rs.1000 credits the wallet 		  1000			 1000			PASS
+TC02  Negative top-up is rejected			  ORA-20007		 ORA-20007		PASS
+TC03a Order total = (2x100 + 40) + 5% GST		  252			 252			PASS
+TC03b Pickup token assigned by trigger			  Y			 Y			PASS
+TC03c Stock deducted by trigger (50 - 2)		  48			 48			PASS
+TC03d Wallet debited (1000 - 252)			  748			 748			PASS
+TC03e Debit entry written to wallet ledger		  1			 1			PASS
+TC03f Status audit row written on insert		  1			 1			PASS
+TC04a Order with empty wallet is rejected		  ORA-20010		 ORA-20010		PASS
+TC04b Failed order fully rolled back			  0			 0			PASS
+TC04c Stock unchanged after failed order		  48			 48			PASS
+TC05  Ordering more than stock is rejected		  ORA-20023		 ORA-20023		PASS
+TC06  Unavailable item cannot be ordered		  ORA-20022		 ORA-20022		PASS
+TC07  Item from a different outlet is rejected		  ORA-20021		 ORA-20021		PASS
+TC08a WELCOME20 on Rs.300 = min(20%, Rs.50)		  50			 50			PASS
+TC08b EXAM10 on Rs.200 = 10%				  20			 20			PASS
+TC09a Expired coupon is rejected			  ORA-20004		 ORA-20004		PASS
+TC09b Unknown coupon is rejected			  ORA-20004		 ORA-20004		PASS
+TC09c Coupon below minimum order is rejected		  ORA-20004		 ORA-20004		PASS
+TC10  Order with WELCOME20 gets Rs.40 off Rs.200	  40			 40			PASS
+TC11  PLACED -> READY is not allowed			  ORA-20005		 ORA-20005		PASS
+TC12  Other outlet's vendor cannot update		  ORA-20008		 ORA-20008		PASS
+TC13a Loyalty points = FLOOR(168 / 10) on pickup	  16			 16			PASS
+TC13b Audit log has 5 status rows			  5			 5			PASS
+TC14a Review updates item rating (trigger)		  4/1			 4/1			PASS
+TC14b Second review of same item is rejected		  ORA-20009		 ORA-20009		PASS
+TC15a Cancel refunds the full amount (Rs.315)		  580			 580			PASS
+TC15b Cancel puts the 3 items back in stock		  3			 3			PASS
+TC15c Cancelled order cannot be reviewed		  ORA-20009		 ORA-20009		PASS
+TC16  Student cannot cancel an ACCEPTED order		  ORA-20006		 ORA-20006		PASS
+TC17  Token equals today's order count at outlet	  5			 5			PASS
+TC18a Stock 3 raises a low-stock alert			  1			 1			PASS
+TC18b Stock 0 hides the item automatically		  N			 N			PASS
+TC18c Restock re-lists item, resolves alert		  Y0			 Y0			PASS
+TC19  Price change recorded in history			  100->110		 100->110		PASS
+TC20  Empty cart is rejected				  ORA-20003		 ORA-20003		PASS
+TC21  Closed outlet does not accept orders		  ORA-20002		 ORA-20002		PASS
+TC22  Wait estimate is at least 5 minutes		  Y			 Y			PASS
+Main Food Court 	  orders=3 items=5 revenue=447.3
+Juice Junction		  orders=1 items=2 revenue=168
+Night Canteen		  orders=1 items=3 revenue=132.3
+TC Test Kitchen 	  orders=5 items=7 revenue=630
+TC23  Daily summary row created for outlet		  1			 1			PASS
+TC24  Low-stock REF CURSOR returns 2 items		  2			 2			PASS
+TC25  Trigger issues a 6-digit pickup code		  Y			 Y			PASS
+TC26  Pickup before READY is rejected			  ORA-20005		 ORA-20005		PASS
+TC27  Hand-over without QR scan is blocked		  ORA-20012		 ORA-20012		PASS
+TC28  Wrong pickup code is rejected			  ORA-20012		 ORA-20012		PASS
+TC29  Typed code hands over the READY order		  PICKED_UP+time	 PICKED_UP+time 	PASS
+TC30  Same QR cannot be used twice			  ORA-20005		 ORA-20005		PASS
+TC31  Pipelined get_slots returns 6 slots		  6			 6			PASS
+TC32  Slot booking counted by trigger			  1/1			 1/1			PASS
+TC33  Order in a full slot is rejected			  ORA-20013		 ORA-20013		PASS
+TC34  get_slots shows the slot as full			  0			 0			PASS
+TC35  Cancel frees the slot again			  0			 0			PASS
+TC36  Pickup time off the 15-min grid rejected		  ORA-20011		 ORA-20011		PASS
+TC37  ASAP order gets next free slot			  17:15 		 17:15			PASS
+Main Food Court 	  orders=3 items=5 revenue=447.3
+Juice Junction		  orders=1 items=2 revenue=168
+Night Canteen		  orders=1 items=3 revenue=132.3
+--------------------------------------------------------------------------------------------------------------
+Total: 53   Passed: 53	 Failed: 0
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

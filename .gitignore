@@ -1,0 +1,8 @@
+node_modules/
+.env
+*.log
+
+# generated report files (contain personal details once filled in)
+docs/report/*.docx
+docs/report/*.pdf
+docs/report/~$*

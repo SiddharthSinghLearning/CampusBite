@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f0531c">
+  <meta name="description" content="Pre-order food from campus canteens, pick a pickup slot and skip the queue.">
+  <title>CampusBite</title>
+  <script>
+    try { const t = localStorage.getItem('cb_theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="inner">
+        <a class="brand" href="#/"><img src="icon.svg" alt=""><span>Campus<b>Bite</b></span></a>
+        <nav class="topnav" id="topnav"></nav>
+        <div class="top-actions">
+          <a class="wallet-chip hidden" id="walletChip" href="#/wallet"></a>
+          <button class="icon-btn" id="themeBtn" aria-label="Switch light or dark theme"></button>
+        </div>
+      </div>
+    </header>
+    <main id="view"></main>
+  </div>
+  <nav class="bottomnav hidden" id="bottomnav"></nav>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

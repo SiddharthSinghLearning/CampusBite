@@ -1,0 +1,67 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:48:11 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:48:01 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 140
+SQL> SET PAGESIZE 100
+SQL> SET FEEDBACK ON
+SQL> COLUMN slot FORMAT A5
+SQL> COLUMN coupon_code FORMAT A10
+SQL> SELECT order_id, token_no, pickup_code, status, subtotal, discount, tax, total_amount, coupon_code,
+  2  	    TO_CHAR(pickup_slot, 'HH24:MI') AS slot
+  3    FROM orders WHERE order_id = 87;
+
+  ORDER_ID   TOKEN_NO PICKUP STATUS	    SUBTOTAL   DISCOUNT        TAX TOTAL_AMOUNT COUPON_COD SLOT
+---------- ---------- ------ ------------ ---------- ---------- ---------- ------------ ---------- -----
+	87	    4 454937 PLACED		 225	     45 	 9	    189 WELCOME20  17:30
+
+1 row selected.
+
+SQL> SELECT order_id, item_id, qty, unit_price, line_total FROM order_item WHERE order_id = 87;
+
+  ORDER_ID    ITEM_ID	     QTY UNIT_PRICE LINE_TOTAL
+---------- ---------- ---------- ---------- ----------
+	87	    1	       1	 65	    65
+	87	    9	       2	 80	   160
+
+2 rows selected.
+
+SQL> COLUMN name FORMAT A12
+SQL> SELECT item_id, name, stock_qty FROM menu_item WHERE item_id IN (1, 9) ORDER BY item_id;
+
+   ITEM_ID NAME 	 STOCK_QTY
+---------- ------------ ----------
+	 1 Masala Dosa		58
+	 9 Pav Bhaji		58
+
+2 rows selected.
+
+SQL> SELECT outlet_id, TO_CHAR(slot_start, 'HH24:MI') AS slot, capacity, booked
+  2    FROM pickup_slot WHERE (outlet_id, slot_start) IN (SELECT outlet_id, pickup_slot FROM orders WHERE order_id = 87);
+
+ OUTLET_ID SLOT    CAPACITY	BOOKED
+---------- ----- ---------- ----------
+	 1 17:30	 10	     1
+
+1 row selected.
+
+SQL> COLUMN remarks FORMAT A12
+SQL> SELECT txn_type, amount, balance_after, remarks FROM wallet_txn WHERE order_id = 87;
+
+TXN_TYPE       AMOUNT BALANCE_AFTER REMARKS
+---------- ---------- ------------- ------------
+DEBIT		  189	      606.8 Order #87
+
+1 row selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

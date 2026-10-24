@@ -1,0 +1,42 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:48:48 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:48:41 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET LINESIZE 140
+SQL> SET PAGESIZE 100
+SQL> SET FEEDBACK ON
+SQL> SELECT order_id, status, total_amount, TO_CHAR(pickup_slot, 'HH24:MI') AS slot FROM orders WHERE order_id = 88;
+
+  ORDER_ID STATUS	TOTAL_AMOUNT SLOT
+---------- ------------ ------------ -----
+	88 PLACED		 168 17:00
+
+1 row selected.
+
+SQL> SELECT stock_qty FROM menu_item WHERE item_id = 17;
+
+ STOCK_QTY
+----------
+	54
+
+1 row selected.
+
+SQL> SELECT booked FROM pickup_slot WHERE (outlet_id, slot_start) IN (SELECT outlet_id, pickup_slot FROM orders WHERE order_id = 88);
+
+    BOOKED
+----------
+	 3
+
+1 row selected.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

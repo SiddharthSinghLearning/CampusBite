@@ -1,0 +1,83 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:37 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:37 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET SERVEROUTPUT ON FORMAT WRAPPED
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> DECLARE
+  2    -- 1. explicit, parameterised cursor
+  3    CURSOR c_menu (p_outlet NUMBER, p_max_price NUMBER) IS
+  4  	 SELECT name, price, stock_qty FROM menu_item
+  5  	  WHERE outlet_id = p_outlet AND price <= p_max_price ORDER BY price, name;
+  6    r c_menu%ROWTYPE;
+  7    c_low SYS_REFCURSOR;
+  8    v_id NUMBER; v_name VARCHAR2(80); v_outlet VARCHAR2(80); v_stock NUMBER; v_av CHAR(1);
+  9  BEGIN
+ 10    DBMS_OUTPUT.PUT_LINE('1) Explicit cursor c_menu(outlet => 2, max price => 60)');
+ 11    OPEN c_menu(2, 60);
+ 12    DBMS_OUTPUT.PUT_LINE('	%ISOPEN after OPEN  = ' || CASE WHEN c_menu%ISOPEN THEN 'TRUE' ELSE 'FALSE' END);
+ 13    LOOP
+ 14  	 FETCH c_menu INTO r;
+ 15  	 EXIT WHEN c_menu%NOTFOUND;
+ 16  	 DBMS_OUTPUT.PUT_LINE('   row ' || c_menu%ROWCOUNT || ': ' || RPAD(r.name, 18) || ' Rs.' || r.price);
+ 17    END LOOP;
+ 18    DBMS_OUTPUT.PUT_LINE('	%NOTFOUND ended the loop, %ROWCOUNT = ' || c_menu%ROWCOUNT);
+ 19    CLOSE c_menu;
+ 20    DBMS_OUTPUT.PUT_LINE('	%ISOPEN after CLOSE = ' || CASE WHEN c_menu%ISOPEN THEN 'TRUE' ELSE 'FALSE' END);
+ 21  
+ 22    DBMS_OUTPUT.PUT_LINE('2) Cursor FOR loop: kitchen wait per outlet');
+ 23    FOR o IN (SELECT outlet_id, name FROM outlet ORDER BY outlet_id) LOOP
+ 24  	 DBMS_OUTPUT.PUT_LINE('   ' || RPAD(o.name, 18) || ' ~' || canteen_pkg.estimate_wait_minutes(o.outlet_id) || ' min');
+ 25    END LOOP;
+ 26  
+ 27    DBMS_OUTPUT.PUT_LINE('3) Implicit cursor attributes after an UPDATE');
+ 28    UPDATE menu_item SET prep_minutes = prep_minutes WHERE outlet_id = 1 AND category_id = 1;
+ 29    DBMS_OUTPUT.PUT_LINE('	SQL%FOUND = ' || CASE WHEN SQL%FOUND THEN 'TRUE' ELSE 'FALSE' END || ', SQL%ROWCOUNT = ' || SQL%ROWCOUNT);
+ 30    ROLLBACK;
+ 31  
+ 32    DBMS_OUTPUT.PUT_LINE('4) REF CURSOR from canteen_pkg.get_low_stock(NULL, 10)');
+ 33    canteen_pkg.get_low_stock(NULL, 10, c_low);
+ 34    LOOP
+ 35  	 FETCH c_low INTO v_id, v_name, v_outlet, v_stock, v_av;
+ 36  	 EXIT WHEN c_low%NOTFOUND;
+ 37  	 DBMS_OUTPUT.PUT_LINE('   ' || RPAD(v_name, 16) || RPAD(v_outlet, 17) || 'stock ' || v_stock || '  available ' || v_av);
+ 38    END LOOP;
+ 39    CLOSE c_low;
+ 40  END;
+ 41  /
+1) Explicit cursor c_menu(outlet => 2, max price => 60)
+   %ISOPEN after OPEN  = TRUE
+   row 1: Masala Chai	     Rs.15
+   row 2: Fresh Lime Soda    Rs.30
+   row 3: Watermelon Juice   Rs.50
+   row 4: Fruit Bowl	     Rs.60
+   row 5: Veg Sandwich	     Rs.60
+   %NOTFOUND ended the loop, %ROWCOUNT = 5
+   %ISOPEN after CLOSE = FALSE
+2) Cursor FOR loop: kitchen wait per outlet
+   Main Food Court    ~12 min
+   Juice Junction     ~7 min
+   Night Canteen      ~5 min
+3) Implicit cursor attributes after an UPDATE
+   SQL%FOUND = TRUE, SQL%ROWCOUNT = 3
+4) REF CURSOR from canteen_pkg.get_low_stock(NULL, 10)
+   Chicken Roll    Night Canteen    stock 0  available N
+   Fruit Bowl	   Juice Junction   stock 0  available N
+   Paneer Roll	   Night Canteen    stock 3  available Y
+   Chilli Paneer   Main Food Court  stock 4  available Y
+   Mango Shake	   Juice Junction   stock 4  available Y
+
+PL/SQL procedure successfully completed.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

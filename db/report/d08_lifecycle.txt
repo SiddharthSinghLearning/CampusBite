@@ -1,0 +1,58 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:36 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:35 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET SERVEROUTPUT ON
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> DECLARE
+  2    v_order NUMBER;
+  3    v_code  VARCHAR2(6);
+  4    v_o	  NUMBER;
+  5    v_t	  NUMBER;
+  6  BEGIN
+  7    SELECT MAX(order_id) INTO v_order FROM orders WHERE user_id = 7;
+  8    canteen_pkg.update_order_status(v_order, 'ACCEPTED',	4);
+  9    canteen_pkg.update_order_status(v_order, 'PREPARING', 4);
+ 10    canteen_pkg.update_order_status(v_order, 'READY',	4);
+ 11    SELECT pickup_code INTO v_code FROM orders WHERE order_id = v_order;
+ 12    canteen_pkg.verify_pickup(3, v_code, v_order, 4, v_o, v_t);
+ 13    DBMS_OUTPUT.PUT_LINE('Order #' || v_o || ' (token ' || v_t || ') handed over after QR check');
+ 14  END;
+ 15  /
+Order #64 (token 1) handed over after QR check
+
+PL/SQL procedure successfully completed.
+
+SQL> COLUMN old_status FORMAT A10
+SQL> COLUMN new_status FORMAT A10
+SQL> SELECT log_id, old_status, new_status, TO_CHAR(changed_at, 'HH24:MI:SS') AS at
+  2    FROM order_status_log
+  3   WHERE order_id = (SELECT MAX(order_id) FROM orders WHERE user_id = 7) ORDER BY log_id;
+
+    LOG_ID OLD_STATUS NEW_STATUS AT
+---------- ---------- ---------- --------
+       286	      PLACED	 16:47:35
+       287 PLACED     ACCEPTED	 16:47:36
+       288 ACCEPTED   PREPARING  16:47:36
+       289 PREPARING  READY	 16:47:36
+       290 READY      PICKED_UP  16:47:36
+
+SQL> COLUMN full_name FORMAT A14
+SQL> SELECT full_name, loyalty_points FROM app_user WHERE user_id = 7;
+
+FULL_NAME      LOYALTY_POINTS
+-------------- --------------
+Rahul Verma		  250
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

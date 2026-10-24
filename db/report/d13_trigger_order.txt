@@ -1,0 +1,60 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:37 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:36 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET SERVEROUTPUT ON FORMAT WRAPPED
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> -- Triggers fired by one place_order call: before / after values
+SQL> DECLARE
+  2    v_stock0 NUMBER; v_stock1 NUMBER; v_bal0 NUMBER; v_bal1 NUMBER;
+  3    v_order NUMBER; v_token NUMBER; v_total NUMBER;
+  4    v_code orders.pickup_code%TYPE; v_slot DATE; v_booked NUMBER; v_price NUMBER;
+  5  BEGIN
+  6    SELECT stock_qty INTO v_stock0 FROM menu_item WHERE item_id = 17;
+  7    SELECT wallet_balance INTO v_bal0 FROM app_user WHERE user_id = 8;
+  8    DBMS_OUTPUT.PUT_LINE('BEFORE	Cold Coffee stock = ' || v_stock0 || ',  Priya wallet = Rs.' || v_bal0);
+  9  
+ 10    canteen_pkg.place_order(8, 2, '[{"item_id":17,"qty":2}]', NULL, NULL, NULL, v_order, v_token, v_total);
+ 11  
+ 12    SELECT pickup_code, pickup_slot INTO v_code, v_slot FROM orders WHERE order_id = v_order;
+ 13    SELECT booked INTO v_booked FROM pickup_slot WHERE outlet_id = 2 AND slot_start = v_slot;
+ 14    SELECT unit_price INTO v_price FROM order_item WHERE order_id = v_order AND item_id = 17;
+ 15    SELECT stock_qty INTO v_stock1 FROM menu_item WHERE item_id = 17;
+ 16    SELECT wallet_balance INTO v_bal1 FROM app_user WHERE user_id = 8;
+ 17    DBMS_OUTPUT.PUT_LINE('ORDER	#' || v_order || ' placed, total Rs.' || v_total);
+ 18    DBMS_OUTPUT.PUT_LINE('AFTER	trg_order_token	  -> token ' || v_token || ', pickup code ' || v_code);
+ 19    DBMS_OUTPUT.PUT_LINE('	     trg_order_slot	  -> slot ' || TO_CHAR(v_slot, 'HH24:MI') || ' booked = ' || v_booked);
+ 20    DBMS_OUTPUT.PUT_LINE('	     trg_order_item_stock -> unit price Rs.' || v_price || ' (from menu), stock ' || v_stock0 || ' -> ' || v_stock1);
+ 21    DBMS_OUTPUT.PUT_LINE('	     wallet debit	  -> Rs.' || v_bal0 || ' -> Rs.' || v_bal1);
+ 22  END;
+ 23  /
+BEFORE	Cold Coffee stock = 58,  Priya wallet = Rs.1171.7
+ORDER	#84 placed, total Rs.168
+AFTER	trg_order_token      -> token 2, pickup code 160314
+	trg_order_slot	     -> slot 17:00 booked = 2
+	trg_order_item_stock -> unit price Rs.80 (from menu), stock 58 -> 56
+	wallet debit	     -> Rs.1171.7 -> Rs.1003.7
+
+PL/SQL procedure successfully completed.
+
+SQL> COLUMN old_status FORMAT A10
+SQL> COLUMN new_status FORMAT A10
+SQL> SELECT log_id, order_id, old_status, new_status
+  2    FROM order_status_log WHERE order_id = (SELECT MAX(order_id) FROM orders);
+
+    LOG_ID   ORDER_ID OLD_STATUS NEW_STATUS
+---------- ---------- ---------- ----------
+       320	   84		 PLACED
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0

@@ -1,0 +1,61 @@
+﻿
+SQL*Plus: Release 21.0.0.0.0 - Production on Sat Oct 24 16:47:36 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Last Successful login time: Sat Oct 24 2026 16:47:36 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> SET SERVEROUTPUT ON
+SQL> SET LINESIZE 120
+SQL> SET PAGESIZE 100
+SQL> DECLARE
+  2    v_rows NUMBER;
+  3  BEGIN
+  4    canteen_pkg.generate_daily_summary(TRUNC(SYSDATE), v_rows);
+  5    DBMS_OUTPUT.PUT_LINE('Outlets processed by cursor: ' || v_rows);
+  6  END;
+  7  /
+Main Food Court 	  orders=3 items=5 revenue=447.3
+Juice Junction		  orders=1 items=2 revenue=168
+Night Canteen		  orders=1 items=3 revenue=132.3
+Outlets processed by cursor: 3
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2    c	  SYS_REFCURSOR;
+  3    v_id	  NUMBER;
+  4    v_name  VARCHAR2(80);
+  5    v_qty   NUMBER;
+  6    v_rev   NUMBER;
+  7    v_rat   NUMBER;
+  8  BEGIN
+  9    canteen_pkg.get_top_items(NULL, 7, 5, c);
+ 10    DBMS_OUTPUT.PUT_LINE(RPAD('Dish', 22) || LPAD('Sold', 6) || LPAD('Revenue', 10));
+ 11    LOOP
+ 12  	 FETCH c INTO v_id, v_name, v_qty, v_rev, v_rat;
+ 13  	 EXIT WHEN c%NOTFOUND;
+ 14  	 DBMS_OUTPUT.PUT_LINE(RPAD(v_name, 22) || LPAD(v_qty, 6) || LPAD(v_rev, 10));
+ 15    END LOOP;
+ 16    DBMS_OUTPUT.PUT_LINE(c%ROWCOUNT || ' rows fetched');
+ 17    CLOSE c;
+ 18  END;
+ 19  /
+Dish			Sold   Revenue
+Fruit Bowl		  13	   780
+Chicken Biryani 	  11	  1760
+South Indian Thali	  11	  1210
+Samosa (2 pcs)		  11	   330
+Cold Coffee		  10	   800
+5 rows fetched
+
+PL/SQL procedure successfully completed.
+
+SQL> EXIT
+Disconnected from Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
